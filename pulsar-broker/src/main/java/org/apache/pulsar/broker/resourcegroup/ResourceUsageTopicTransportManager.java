@@ -23,6 +23,7 @@ import static org.apache.pulsar.common.util.Runnables.catchingAndLoggingThrowabl
 import com.google.common.collect.Sets;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
+import io.netty.util.ReferenceCountUtil;
 import java.nio.ByteBuffer;
 import java.util.List;
 import java.util.Map;
@@ -105,7 +106,7 @@ public class ResourceUsageTopicTransportManager implements ResourceUsageTranspor
                     if (null != ex) {
                         LOG.error("Resource usage publisher: error sending message ID {}", id, ex);
                     }
-                    buf.release();
+                    ReferenceCountUtil.safeRelease(buf);
                 });
             }
         }

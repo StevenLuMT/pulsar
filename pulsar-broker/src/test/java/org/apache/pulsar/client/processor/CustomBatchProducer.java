@@ -21,6 +21,8 @@ package org.apache.pulsar.client.processor;
 import io.netty.buffer.ByteBuf;
 import java.util.ArrayList;
 import java.util.List;
+
+import io.netty.util.ReferenceCountUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.pulsar.broker.service.persistent.PersistentTopic;
@@ -46,7 +48,7 @@ public class CustomBatchProducer {
         final ByteBuf buf = CustomBatchFormat.serialize(messages);
         final ByteBuf headerAndPayload = Commands.serializeMetadataAndPayload(Commands.ChecksumType.None,
                 createCustomMetadata(), buf);
-        buf.release();
+        ReferenceCountUtil.safeRelease(buf);
         persistentTopic.publishMessage(headerAndPayload, (e, ledgerId, entryId) -> {
             if (e == null) {
                 log.info("Send successfully to {} ({}, {})", persistentTopic.getName(), ledgerId, entryId);

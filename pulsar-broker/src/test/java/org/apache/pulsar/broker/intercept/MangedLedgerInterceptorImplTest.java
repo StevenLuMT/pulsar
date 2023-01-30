@@ -22,6 +22,8 @@ import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import java.util.concurrent.CountDownLatch;
 import java.util.function.Predicate;
+
+import io.netty.util.ReferenceCountUtil;
 import lombok.Cleanup;
 import org.apache.bookkeeper.mledger.AsyncCallbacks;
 import org.apache.bookkeeper.mledger.Entry;
@@ -68,13 +70,13 @@ public class MangedLedgerInterceptorImplTest  extends MockedBookKeeperTestCase {
                 public ByteBuf process(Object contextObj, ByteBuf inputPayload) {
                     byte[] newMessage = (new String("Modified Test Message")).getBytes();
                     ByteBuf processedPayload =  Unpooled.wrappedBuffer(newMessage, 0, newMessage.length);
-                    inputPayload.release();
+                    ReferenceCountUtil.safeRelease(inputPayload);
                     return processedPayload.retainedDuplicate();
                 }
 
                 @Override
                 public void release(ByteBuf processedPayload) {
-                    processedPayload.release();
+                    ReferenceCountUtil.safeRelease(processedPayload);
                 }
             };
         }
@@ -89,13 +91,13 @@ public class MangedLedgerInterceptorImplTest  extends MockedBookKeeperTestCase {
                     Assert.assertTrue(storedMessage.equals("Modified Test Message"));
 
                     byte[] newMessage = (new String("Test Message")).getBytes();
-                    inputPayload.release();
+                    ReferenceCountUtil.safeRelease(inputPayload);
                     return Unpooled.wrappedBuffer(newMessage, 0, newMessage.length).retainedDuplicate();
                 }
 
                 @Override
                 public void release(ByteBuf processedPayload) {
-                    processedPayload.release();
+                    ReferenceCountUtil.safeRelease(processedPayload);
                 }
             };
         }

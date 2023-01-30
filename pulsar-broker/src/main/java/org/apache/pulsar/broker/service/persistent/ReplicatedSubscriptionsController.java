@@ -20,6 +20,7 @@ package org.apache.pulsar.broker.service.persistent;
 
 import static org.apache.pulsar.common.util.Runnables.catchingAndLoggingThrowables;
 import io.netty.buffer.ByteBuf;
+import io.netty.util.ReferenceCountUtil;
 import io.prometheus.client.Gauge;
 import java.io.IOException;
 import java.time.Clock;
@@ -272,7 +273,7 @@ public class ReplicatedSubscriptionsController implements AutoCloseable, Topic.P
         try {
             topic.publishMessage(marker, this);
         } finally {
-            marker.release();
+            ReferenceCountUtil.safeRelease(marker);
         }
     }
 

@@ -46,6 +46,8 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+
+import io.netty.util.ReferenceCountUtil;
 import lombok.Cleanup;
 import lombok.SneakyThrows;
 import org.apache.bookkeeper.client.BookKeeper;
@@ -1771,7 +1773,7 @@ public class CompactionTest extends MockedPulsarServiceBaseTest {
                     //
                 }
             }, null);
-            marker.release();
+            ReferenceCountUtil.safeRelease(marker);
         }
         producer.send("msg-2".getBytes(StandardCharsets.UTF_8));
         admin.topics().triggerCompaction(dest.toString());

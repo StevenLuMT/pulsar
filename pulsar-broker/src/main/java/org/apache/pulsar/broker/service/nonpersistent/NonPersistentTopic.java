@@ -24,6 +24,7 @@ import static org.apache.pulsar.common.policies.data.BacklogQuota.BacklogQuotaTy
 import static org.apache.pulsar.common.protocol.Commands.DEFAULT_CONSUMER_EPOCH;
 import com.carrotsearch.hppc.ObjectObjectHashMap;
 import io.netty.buffer.ByteBuf;
+import io.netty.util.ReferenceCountUtil;
 import io.netty.util.concurrent.FastThreadLocal;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -196,7 +197,7 @@ public class NonPersistentTopic extends AbstractTopic implements Topic, TopicPol
             ByteBuf duplicateBuffer = data.retainedDuplicate();
             Entry entry = create(0L, 0L, duplicateBuffer);
             // entry internally retains data so, duplicateBuffer should be release here
-            duplicateBuffer.release();
+            ReferenceCountUtil.safeRelease(duplicateBuffer);
             if (subscription.getDispatcher() != null) {
                 subscription.getDispatcher().sendMessages(Collections.singletonList(entry));
             } else {
@@ -211,7 +212,7 @@ public class NonPersistentTopic extends AbstractTopic implements Topic, TopicPol
                 ByteBuf duplicateBuffer = data.retainedDuplicate();
                 Entry entry = create(0L, 0L, duplicateBuffer);
                 // entry internally retains data so, duplicateBuffer should be release here
-                duplicateBuffer.release();
+                ReferenceCountUtil.safeRelease(duplicateBuffer);
                 replicator.sendMessage(entry);
             });
         }

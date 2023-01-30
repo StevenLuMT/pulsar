@@ -59,6 +59,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
+
+import io.netty.util.ReferenceCountUtil;
 import org.apache.bookkeeper.mledger.AsyncCallbacks.AddEntryCallback;
 import org.apache.bookkeeper.mledger.AsyncCallbacks.CloseCallback;
 import org.apache.bookkeeper.mledger.AsyncCallbacks.DeleteCursorCallback;
@@ -741,7 +743,7 @@ public class ServerCnxTest {
 
         clientCommand = ByteBufPair.coalesce(Commands.newSend(1, 0, 1, ChecksumType.None, messageMetadata, data));
         channel.writeInbound(Unpooled.copiedBuffer(clientCommand));
-        clientCommand.release();
+        ReferenceCountUtil.safeRelease(clientCommand);
 
         assertTrue(getResponse() instanceof CommandSendReceipt);
         channel.finish();
@@ -762,7 +764,7 @@ public class ServerCnxTest {
         ByteBuf clientCommand = ByteBufPair.coalesce(Commands.newSend(1, 0, 1,
                 ChecksumType.None, messageMetadata, data));
         channel.writeInbound(Unpooled.copiedBuffer(clientCommand));
-        clientCommand.release();
+        ReferenceCountUtil.safeRelease(clientCommand);
 
         // Then expect channel to close
         Awaitility.await().atMost(10, TimeUnit.SECONDS).until(() -> !channel.isActive());
@@ -1636,7 +1638,7 @@ public class ServerCnxTest {
 
         clientCommand = ByteBufPair.coalesce(Commands.newSend(1, 0, 1, ChecksumType.None, messageMetadata, data));
         channel.writeInbound(Unpooled.copiedBuffer(clientCommand));
-        clientCommand.release();
+        ReferenceCountUtil.safeRelease(clientCommand);
         assertTrue(getResponse() instanceof CommandSendReceipt);
         channel.finish();
     }
@@ -1679,7 +1681,7 @@ public class ServerCnxTest {
 
         clientCommand = ByteBufPair.coalesce(Commands.newSend(1, 0, 1, ChecksumType.None, messageMetadata, data));
         channel.writeInbound(Unpooled.copiedBuffer(clientCommand));
-        clientCommand.release();
+        ReferenceCountUtil.safeRelease(clientCommand);
         assertTrue(getResponse() instanceof CommandSendError);
         channel.finish();
     }

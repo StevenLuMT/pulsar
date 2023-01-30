@@ -29,6 +29,8 @@ import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+
+import io.netty.util.ReferenceCountUtil;
 import org.apache.pulsar.client.api.CryptoKeyReader;
 import org.apache.pulsar.client.api.EncryptionKeyInfo;
 import org.apache.pulsar.client.api.MessageCrypto;
@@ -136,11 +138,11 @@ public class RawBatchMessageContainerImplTest {
 
         Assert.assertEquals(payload1.toString(Charset.defaultCharset()), "hi-1");
         Assert.assertEquals(payload2.toString(Charset.defaultCharset()), "hi-2");
-        payload1.release();
-        payload2.release();
+        ReferenceCountUtil.safeRelease(payload1);
+        ReferenceCountUtil.safeRelease(payload2);
         singleMessageMetadataAndPayload.release();
-        metadataAndPayload.release();
-        buf.release();
+        ReferenceCountUtil.safeRelease(metadataAndPayload);
+        ReferenceCountUtil.safeRelease(buf);
     }
 
     @Test
@@ -187,12 +189,12 @@ public class RawBatchMessageContainerImplTest {
 
         Assert.assertEquals(payload1.toString(Charset.defaultCharset()), "hi-1");
         Assert.assertEquals(payload2.toString(Charset.defaultCharset()), "hi-2");
-        payload1.release();
-        payload2.release();
+        ReferenceCountUtil.safeRelease(payload1);
+        ReferenceCountUtil.safeRelease(payload2);
         singleMessageMetadataAndPayload.release();
-        metadataAndPayload.release();
-        uncompressed.release();
-        buf.release();
+        ReferenceCountUtil.safeRelease(metadataAndPayload);
+        ReferenceCountUtil.safeRelease(uncompressed);
+        ReferenceCountUtil.safeRelease(buf);
     }
 
     @Test
@@ -222,8 +224,8 @@ public class RawBatchMessageContainerImplTest {
 
         Assert.assertEquals(singleMessageMetadataAndPayload.getPayload().toString(Charset.defaultCharset()), "hi-1");
         singleMessageMetadataAndPayload.release();
-        metadataAndPayload.release();
-        buf.release();
+        ReferenceCountUtil.safeRelease(metadataAndPayload);
+        ReferenceCountUtil.safeRelease(buf);
     }
 
     @Test

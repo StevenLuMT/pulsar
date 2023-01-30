@@ -19,6 +19,7 @@
 package org.apache.pulsar.broker.transaction.buffer.impl;
 
 import io.netty.buffer.ByteBuf;
+import io.netty.util.ReferenceCountUtil;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -161,7 +162,7 @@ class InMemTransactionBuffer implements TransactionBuffer {
         public void close() {
             synchronized (entries) {
                 entries.forEach((sequenceId, buffer) -> {
-                    buffer.release();
+                    ReferenceCountUtil.safeRelease(buffer);
                 });
                 entries.clear();
             }

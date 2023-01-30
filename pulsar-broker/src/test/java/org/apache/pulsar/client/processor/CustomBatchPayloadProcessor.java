@@ -20,6 +20,8 @@ package org.apache.pulsar.client.processor;
 
 import io.netty.buffer.ByteBuf;
 import java.util.function.Consumer;
+
+import io.netty.util.ReferenceCountUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.pulsar.client.api.MessagePayloadContext;
 import org.apache.pulsar.client.api.Message;
@@ -55,7 +57,7 @@ public class CustomBatchPayloadProcessor implements MessagePayloadProcessor {
                 }
             }
         } finally {
-            buf.release();
+            ReferenceCountUtil.safeRelease(buf);
         }
     }
 }

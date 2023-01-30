@@ -20,6 +20,7 @@ package org.apache.pulsar.broker.transaction.buffer.impl;
 
 import com.google.common.annotations.VisibleForTesting;
 import io.netty.buffer.ByteBuf;
+import io.netty.util.ReferenceCountUtil;
 import io.netty.util.Timeout;
 import io.netty.util.Timer;
 import io.netty.util.TimerTask;
@@ -320,7 +321,7 @@ public class TopicTransactionBuffer extends TopicTransactionBufferState implemen
                     }
                 }, null);
             } finally {
-                commitMarker.release();
+                ReferenceCountUtil.safeRelease(commitMarker);
             }
         }).exceptionally(exception -> {
             log.error("Transaction {} commit on topic {}.", txnID.toString(), topic.getName(), exception.getCause());
@@ -367,7 +368,7 @@ public class TopicTransactionBuffer extends TopicTransactionBufferState implemen
                     }
                 }, null);
             } finally {
-                abortMarker.release();
+                ReferenceCountUtil.safeRelease(abortMarker);
             }
         }).exceptionally(exception -> {
             log.error("Transaction {} abort on topic {}.", txnID.toString(), topic.getName(), exception.getCause());

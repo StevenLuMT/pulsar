@@ -19,6 +19,7 @@
 package org.apache.pulsar.broker.service.persistent;
 
 import io.netty.buffer.ByteBuf;
+import io.netty.util.ReferenceCountUtil;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import lombok.extern.slf4j.Slf4j;
@@ -159,7 +160,7 @@ public class GeoPersistentReplicator extends PersistentReplicator {
                 CompletableFuture<SchemaInfo> schemaFuture = getSchemaInfo(msg);
                 if (!schemaFuture.isDone() || schemaFuture.isCompletedExceptionally()) {
                     entry.release();
-                    headersAndPayload.release();
+                    ReferenceCountUtil.safeRelease(headersAndPayload);
                     msg.recycle();
                     // Mark the replicator is fetching the schema for now and rewind the cursor
                     // and trigger the next read after complete the schema fetching.

@@ -48,6 +48,8 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicIntegerFieldUpdater;
 import java.util.function.Supplier;
+
+import io.netty.util.ReferenceCountUtil;
 import org.apache.bookkeeper.mledger.AsyncCallbacks.AddEntryCallback;
 import org.apache.bookkeeper.mledger.AsyncCallbacks.DeleteCursorCallback;
 import org.apache.bookkeeper.mledger.AsyncCallbacks.DeleteLedgerCallback;
@@ -126,7 +128,7 @@ public class PersistentDispatcherFailoverConsumerTest {
                     consumerChanges.put(cmd.getActiveConsumerChange());
                 }
             } finally {
-                cmdBuf.release();
+                ReferenceCountUtil.safeRelease(cmdBuf);
             }
 
             return null;

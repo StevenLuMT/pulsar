@@ -19,6 +19,7 @@
 package org.apache.pulsar.broker.transaction.buffer.impl;
 
 import io.netty.buffer.ByteBuf;
+import io.netty.util.ReferenceCountUtil;
 import org.apache.bookkeeper.mledger.Entry;
 import org.apache.bookkeeper.mledger.Position;
 import org.apache.pulsar.broker.transaction.buffer.TransactionEntry;
@@ -92,7 +93,7 @@ public class TransactionEntryImpl implements TransactionEntry {
     @Override
     public void close() {
         if (null != entry) {
-            entry.getDataBuffer().release();
+            ReferenceCountUtil.safeRelease(entry.getDataBuffer());
             entry.release();
         }
     }

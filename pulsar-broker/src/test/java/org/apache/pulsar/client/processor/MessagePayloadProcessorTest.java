@@ -25,6 +25,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import io.netty.buffer.ByteBuf;
+import io.netty.util.ReferenceCountUtil;
 import lombok.Cleanup;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.pulsar.broker.service.persistent.PersistentTopic;
@@ -182,7 +183,7 @@ public class MessagePayloadProcessorTest extends ProducerConsumerBase {
             Assert.assertEquals(parsedTokens.size(), input.size());
 
             Assert.assertEquals(buf.refCnt(), 1);
-            buf.release();
+            ReferenceCountUtil.safeRelease(buf);
         }
     }
 

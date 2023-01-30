@@ -26,6 +26,7 @@ import com.github.zafarkhaja.semver.Version;
 import com.google.common.base.Throwables;
 import com.google.common.collect.Sets;
 import io.netty.buffer.ByteBuf;
+import io.netty.util.ReferenceCountUtil;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.util.ArrayList;
@@ -3192,11 +3193,11 @@ public class PersistentTopicsBase extends AdminResource {
         ByteBuf data = PulsarByteBufAllocator.DEFAULT.heapBuffer(uncompressedPayload.readableBytes(),
                 uncompressedPayload.readableBytes());
         data.writeBytes(uncompressedPayload);
-        uncompressedPayload.release();
+        ReferenceCountUtil.safeRelease(uncompressedPayload);
 
         StreamingOutput stream = output -> {
             output.write(data.array(), data.arrayOffset(), data.readableBytes());
-            data.release();
+            ReferenceCountUtil.safeRelease(data);
         };
 
         return responseBuilder.entity(stream).build();

@@ -19,6 +19,7 @@
 package org.apache.pulsar.broker.transaction.buffer.impl;
 
 import io.netty.buffer.ByteBuf;
+import io.netty.util.ReferenceCountUtil;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -91,7 +92,7 @@ public class InMemTransactionBufferReader implements TransactionBufferReader {
     public synchronized void close() {
         while (entries.hasNext()) {
             Entry<Long, ByteBuf> entry = entries.next();
-            entry.getValue().release();
+            ReferenceCountUtil.safeRelease(entry.getValue());
         }
     }
 }
