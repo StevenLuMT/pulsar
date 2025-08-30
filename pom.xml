@@ -177,7 +177,7 @@ flexible messaging model and an intuitive client API.</description>
     <!-- apache commons -->
     <commons-compress.version>1.27.1</commons-compress.version>
 
-    <bookkeeper.version>4.17.1</bookkeeper.version>
+    <bookkeeper.version>4.16.7</bookkeeper.version>
     <zookeeper.version>3.9.3</zookeeper.version>
     <commons-cli.version>1.9.0</commons-cli.version>
     <commons-text.version>1.13.1</commons-text.version>
@@ -2988,6 +2988,14 @@ flexible messaging model and an intuitive client API.</description>
   </profiles>
 
   <repositories>
+    <repository>
+      <id>bk-staging</id>
+      <name>bk-staging</name>
+      <url>https://repository.apache.org/content/repositories/orgapachebookkeeper-1099/</url>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+    </repository>
     <repository>
       <id>central</id>
       <layout>default</layout>
