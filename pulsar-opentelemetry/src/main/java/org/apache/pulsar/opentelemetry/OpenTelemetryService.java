@@ -47,6 +47,7 @@ import org.apache.commons.lang3.StringUtils;
 public class OpenTelemetryService implements Closeable {
 
     public static final String OTEL_SDK_DISABLED_KEY = "otel.sdk.disabled";
+    static final String OTEL_EXPORTER_OTLP_PROTOCOL_KEY = "otel.exporter.otlp.protocol";
     static final String OTEL_EXPORTER_PROMETHEUS_HOST_KEY = "otel.exporter.prometheus.host";
     static final int MAX_CARDINALITY_LIMIT = 10000;
 
@@ -81,6 +82,12 @@ public class OpenTelemetryService implements Closeable {
                 "otel.java.metrics.cardinality.limit", Integer.toString(MAX_CARDINALITY_LIMIT + 1),
                 // Reduce number of allocations by using reusable data mode.
                 "otel.java.exporter.memory_mode", MemoryMode.REUSABLE_DATA.name(),
+                // Preserve the pre-OpenTelemetry-1.62.0 OTLP default protocol of gRPC. OpenTelemetry 1.62.0
+                // switched the default OTLP protocol to http/protobuf, which breaks existing Pulsar deployments
+                // and integration tests that only set OTEL_EXPORTER_OTLP_ENDPOINT to a gRPC receiver on port 4317.
+                // Supplied as a default, so it is still overridden by an explicit OTEL_EXPORTER_OTLP_PROTOCOL
+                // environment variable / otel.exporter.otlp.protocol system property.
+                OTEL_EXPORTER_OTLP_PROTOCOL_KEY, "grpc",
                 // Preserve the pre-OpenTelemetry-1.62.0 behavior of binding the Prometheus exporter's HTTP server
                 // to all interfaces. OpenTelemetry 1.62.0 changed the default host from "0.0.0.0" to "localhost",
                 // which makes the metrics endpoint unreachable from outside the host (e.g. another container or a
