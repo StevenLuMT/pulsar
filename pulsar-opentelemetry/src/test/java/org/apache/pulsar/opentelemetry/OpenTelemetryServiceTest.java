@@ -175,6 +175,25 @@ public class OpenTelemetryServiceTest {
     }
 
     @Test
+    public void testOtlpExporterDefaultsToGrpcProtocol() {
+        // OpenTelemetry 1.62.0 changed the OTLP exporter's default protocol from gRPC to http/protobuf.
+        // Pulsar restores the previous gRPC default so existing OTEL_EXPORTER_OTLP_ENDPOINT=host:4317
+        // configurations keep working unless the protocol is explicitly overridden.
+        var capturedProtocol = new AtomicReference<String>();
+        @Cleanup
+        var ots = OpenTelemetryService.builder()
+                .builderCustomizer(getBuilderCustomizer(null,
+                        Map.of(OpenTelemetryService.OTEL_SDK_DISABLED_KEY, "false"))
+                        .andThen(builder -> builder.addPropertiesCustomizer(config -> {
+                            capturedProtocol.set(config.getString(OpenTelemetryService.OTEL_EXPORTER_OTLP_PROTOCOL_KEY));
+                            return Map.of();
+                        })))
+                .clusterName("openTelemetryServiceOtlpProtocolTestCluster")
+                .build();
+        assertThat(capturedProtocol.get()).isEqualTo("grpc");
+    }
+
+    @Test
     public void testLongCounter() {
         var longCounter = meter.counterBuilder("dummyLongCounter").build();
         var attributes = Attributes.of(AttributeKey.stringKey("dummyAttr"), "dummyValue");
