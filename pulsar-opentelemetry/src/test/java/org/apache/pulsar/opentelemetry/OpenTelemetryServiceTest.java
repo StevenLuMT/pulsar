@@ -185,7 +185,8 @@ public class OpenTelemetryServiceTest {
                 .builderCustomizer(getBuilderCustomizer(null,
                         Map.of(OpenTelemetryService.OTEL_SDK_DISABLED_KEY, "false"))
                         .andThen(builder -> builder.addPropertiesCustomizer(config -> {
-                            capturedProtocol.set(config.getString(OpenTelemetryService.OTEL_EXPORTER_OTLP_PROTOCOL_KEY));
+                            capturedProtocol.set(
+                                    config.getString(OpenTelemetryService.OTEL_EXPORTER_OTLP_PROTOCOL_KEY));
                             return Map.of();
                         })))
                 .clusterName("openTelemetryServiceOtlpProtocolTestCluster")
