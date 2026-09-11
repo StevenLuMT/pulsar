@@ -4589,6 +4589,13 @@ public class ServiceConfiguration implements PulsarConfiguration {
     )
     private Set<String> additionalServlets = new TreeSet<>();
 
+    @FieldContext(
+            category = CATEGORY_POLICIES,
+            doc = "If true(default),  export topic partition level metrics,\n If false, export topic level metrics, "
+                    + "without partitions,there is only one monitoring item for each topic within the broker."
+    )
+    private boolean topicPartitionLevelMetricsInPrometheusEnabled = true;
+
     /**
      * @deprecated Use {@link #getSubscriptionTypesEnabled()} instead
      */

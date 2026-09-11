@@ -176,6 +176,13 @@ public class CmdTopicPolicies extends CmdBase {
         addCommand("get-replication-clusters", new GetReplicationClusters());
         addCommand("set-replication-clusters", new SetReplicationClusters());
         addCommand("remove-replication-clusters", new RemoveReplicationClusters());
+
+        addCommand("set-topic-partition-level-metrics-in-prometheus",
+                new SetTopicPartitionLevelMetricsInPrometheusStatus());
+        addCommand("get-topic-partition-level-metrics-in-prometheus",
+                new GetTopicPartitionLevelMetricsInPrometheusStatus());
+        addCommand("remove-topic-partition-level-metrics-in-prometheus",
+                new RemoveTopicPartitionLevelMetricsInPrometheusStatus());
     }
 
     @Command(description = "Get entry filters for a topic")
@@ -2131,6 +2138,62 @@ public class CmdTopicPolicies extends CmdBase {
         void run() throws PulsarAdminException {
             String persistentTopic = validatePersistentTopic(topicName);
             getTopicPolicies(false).deleteTopicPolicies(persistentTopic);
+        }
+    }
+
+    @Command(description = "Enable or disable the topicPartitionLevelMetricsInPrometheus status for a topic")
+    private class SetTopicPartitionLevelMetricsInPrometheusStatus extends CliCommand {
+        @Parameters(description = "persistent://tenant/namespace/topic", arity = "1")
+        private String topicName;
+
+        @Option(names = { "--enable", "-e" }, description = "Enable topicPartitionLevelMetricsInPrometheus")
+        private boolean enable = false;
+
+        @Option(names = { "--disable", "-d" }, description = "Disable topicPartitionLevelMetricsInPrometheus")
+        private boolean disable = false;
+
+        @Option(names = { "--global", "-g" }, description = "Whether to set this policy globally. "
+                + "If set to true, the policy will be replicate to other clusters asynchronously")
+        private boolean isGlobal = false;
+
+        @Override
+        void run() throws PulsarAdminException {
+            String persistentTopic = validatePersistentTopic(topicName);
+            if (enable == disable) {
+                throw new ParameterException("Need to specify either --enable or --disable");
+            }
+            getTopicPolicies(isGlobal).setTopicPartitionLevelMetricsInPrometheusStatus(persistentTopic, enable);
+        }
+    }
+
+    @Command(description = "Get the topicPartitionLevelMetricsInPrometheus status for a topic")
+    private class GetTopicPartitionLevelMetricsInPrometheusStatus extends CliCommand {
+        @Parameters(description = "persistent://tenant/namespace/topic", arity = "1")
+        private String topicName;
+
+        @Option(names = { "--global", "-g" }, description = "Whether to get this policy globally. ")
+        private boolean isGlobal = false;
+
+        @Override
+        void run() throws PulsarAdminException {
+            String persistentTopic = validatePersistentTopic(topicName);
+            print(getTopicPolicies(isGlobal).getTopicPartitionLevelMetricsInPrometheusStatus(persistentTopic));
+        }
+    }
+
+    @Command(description = "Remove the topicPartitionLevelMetricsInPrometheus status for a topic")
+    private class RemoveTopicPartitionLevelMetricsInPrometheusStatus extends CliCommand {
+        @Parameters(description = "persistent://tenant/namespace/topic", arity = "1")
+        private String topicName;
+
+        @Option(names = { "--global", "-g" }, description = "Whether to remove this policy globally. "
+                + "If set to true, the policy will be replicate to other clusters asynchronously")
+        private boolean isGlobal = false;
+
+        @Override
+        void run() throws PulsarAdminException {
+            String persistentTopic = validatePersistentTopic(topicName);
+            getTopicPolicies(isGlobal).removeTopicPartitionLevelMetricsInPrometheusStatus(persistentTopic);
         }
     }
 

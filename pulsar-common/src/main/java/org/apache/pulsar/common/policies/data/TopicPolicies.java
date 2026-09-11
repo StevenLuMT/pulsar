@@ -83,6 +83,10 @@ public class TopicPolicies implements Cloneable {
     // If set, it will override the namespace settings for allowing auto subscription creation
     private AutoSubscriptionCreationOverrideImpl autoSubscriptionCreationOverride;
 
+    // If true(default),  export topic partition level metrics
+    // If false, export topic level metrics, without partitions,there is only one monitoring item for each topic within the broker.
+    private Boolean topicPartitionLevelMetricsInPrometheusEnabled;
+
     /**
      * Subscription level policies for specific subscription.
      */
@@ -273,5 +277,9 @@ public class TopicPolicies implements Cloneable {
             subscriptionPolicies = new ConcurrentHashMap<>();
         }
         return subscriptionPolicies;
+    }
+
+    public boolean isTopicPartitionLevelMetricsInPrometheusSet() {
+        return topicPartitionLevelMetricsInPrometheusEnabled != null;
     }
 }

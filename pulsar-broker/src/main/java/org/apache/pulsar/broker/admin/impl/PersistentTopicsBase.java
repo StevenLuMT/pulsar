@@ -5850,6 +5850,29 @@ public class PersistentTopicsBase extends AdminResource {
         return indexFuture;
     }
 
+    protected CompletableFuture<Boolean> internalGetTopicPartitionLevelMetricsInPrometheus(boolean applied,
+                                                                                           boolean isGlobal) {
+        return getTopicPoliciesAsyncWithRetry(topicName, isGlobal)
+                .thenApply(op -> op.map(TopicPolicies::getTopicPartitionLevelMetricsInPrometheusEnabled)
+                        .orElseGet(() -> {
+                            if (applied) {
+                                Boolean enabled = getNamespacePolicies(namespaceName)
+                                        .topicPartitionLevelMetricsInPrometheusEnabled;
+                                return enabled == null
+                                        ? config().isTopicPartitionLevelMetricsInPrometheusEnabled() : enabled;
+                            }
+                            return null;
+                        }));
+    }
+
+    protected CompletableFuture<Void> internalSetTopicPartitionLevelMetricsInPrometheus(Boolean enabled,
+                                                                                        boolean isGlobal) {
+        return pulsar().getTopicPoliciesService()
+                .updateTopicPoliciesAsync(topicName, isGlobal, enabled == null, policies -> {
+                    policies.setTopicPartitionLevelMetricsInPrometheusEnabled(enabled);
+                });
+    }
+
     private static Long getIndexFromEntry(Entry entry) {
         return Commands.peekBrokerEntryMetadataToObject(entry.getDataBuffer(), brokerEntryMetadata -> {
             if (brokerEntryMetadata != null && brokerEntryMetadata.hasIndex()) {

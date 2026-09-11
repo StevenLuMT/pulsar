@@ -154,6 +154,10 @@ public class Policies {
     @SuppressWarnings("checkstyle:MemberName")
     public EntryFilters entryFilters = null;
 
+    // If true(default),  export topic partition level metrics
+    // If false, export topic level metrics, without partitions,there is only one monitoring item for each topic within the broker.
+    public Boolean topicPartitionLevelMetricsInPrometheusEnabled = null;
+
     @Override
     public int hashCode() {
         return Objects.hash(auth_policies, replication_clusters, allowed_clusters,
@@ -180,7 +184,8 @@ public class Policies {
                 allowed_topic_property_keys_for_metrics,
                 properties,
                 resource_group_name, entryFilters, migrated,
-                dispatcherPauseOnAckStatePersistentEnabled);
+                dispatcherPauseOnAckStatePersistentEnabled,
+                topicPartitionLevelMetricsInPrometheusEnabled);
     }
 
     @Override
@@ -235,6 +240,8 @@ public class Policies {
                     && Objects.equals(migrated, other.migrated)
                     && Objects.equals(resource_group_name, other.resource_group_name)
                     && Objects.equals(entryFilters, other.entryFilters)
+                    && Objects.equals(topicPartitionLevelMetricsInPrometheusEnabled,
+                    other.topicPartitionLevelMetricsInPrometheusEnabled)
                     && Objects.equals(dispatcherPauseOnAckStatePersistentEnabled,
                     other.dispatcherPauseOnAckStatePersistentEnabled);
         }

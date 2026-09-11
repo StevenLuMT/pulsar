@@ -62,6 +62,7 @@ public class HierarchyTopicPolicies {
 
     final PolicyHierarchyValue<Boolean> schemaValidationEnforced;
     final PolicyHierarchyValue<EntryFilters> entryFilters;
+    final PolicyHierarchyValue<Boolean> topicPartitionLevelMetricsInPrometheusEnabled;
 
     public HierarchyTopicPolicies() {
         replicationClusters = new PolicyHierarchyValue<>();
@@ -96,5 +97,6 @@ public class HierarchyTopicPolicies {
         dispatchRate = new PolicyHierarchyValue<>();
         schemaValidationEnforced = new PolicyHierarchyValue<>();
         entryFilters = new PolicyHierarchyValue<>();
+        topicPartitionLevelMetricsInPrometheusEnabled = new PolicyHierarchyValue<>();
     }
 }

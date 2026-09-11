@@ -1556,6 +1556,41 @@ public class PulsarAdminToolTest {
         verify(mockGlobalTopicsPolicies).getAutoSubscriptionCreation("persistent://prop/ns1/ds1", true);
         cmdTopics.run(split("remove-auto-subscription-creation persistent://prop/ns1/ds1 -g"));
         verify(mockGlobalTopicsPolicies).removeAutoSubscriptionCreation("persistent://prop/ns1/ds1");
+
+        cmdTopics = new CmdTopicPolicies(() -> admin);
+        cmdTopics.run(split("get-topic-partition-level-metrics-in-prometheus persistent://myprop/ns1/ds1"));
+        verify(mockTopicsPolicies).getTopicPartitionLevelMetricsInPrometheusStatus("persistent://myprop/ns1/ds1");
+        cmdTopics = new CmdTopicPolicies(() -> admin);
+        cmdTopics.run(split("set-topic-partition-level-metrics-in-prometheus persistent://myprop/ns1/ds1 --disable"));
+        verify(mockTopicsPolicies)
+                .setTopicPartitionLevelMetricsInPrometheusStatus("persistent://myprop/ns1/ds1", false);
+        cmdTopics = new CmdTopicPolicies(() -> admin);
+        cmdTopics.run(split("set-topic-partition-level-metrics-in-prometheus persistent://myprop/ns1/ds1 --enable"));
+        verify(mockTopicsPolicies)
+                .setTopicPartitionLevelMetricsInPrometheusStatus("persistent://myprop/ns1/ds1", true);
+        cmdTopics = new CmdTopicPolicies(() -> admin);
+        cmdTopics.run(split("remove-topic-partition-level-metrics-in-prometheus persistent://myprop/ns1/ds1"));
+        verify(mockTopicsPolicies)
+                .removeTopicPartitionLevelMetricsInPrometheusStatus("persistent://myprop/ns1/ds1");
+
+        cmdTopics = new CmdTopicPolicies(() -> admin);
+        cmdTopics.run(split("get-topic-partition-level-metrics-in-prometheus persistent://myprop/ns1/ds1 -g"));
+        verify(mockGlobalTopicsPolicies)
+                .getTopicPartitionLevelMetricsInPrometheusStatus("persistent://myprop/ns1/ds1");
+        cmdTopics = new CmdTopicPolicies(() -> admin);
+        cmdTopics.run(split(
+                "set-topic-partition-level-metrics-in-prometheus persistent://myprop/ns1/ds1 --disable -g"));
+        verify(mockGlobalTopicsPolicies)
+                .setTopicPartitionLevelMetricsInPrometheusStatus("persistent://myprop/ns1/ds1", false);
+        cmdTopics = new CmdTopicPolicies(() -> admin);
+        cmdTopics.run(split(
+                "set-topic-partition-level-metrics-in-prometheus persistent://myprop/ns1/ds1 --enable -g"));
+        verify(mockGlobalTopicsPolicies)
+                .setTopicPartitionLevelMetricsInPrometheusStatus("persistent://myprop/ns1/ds1", true);
+        cmdTopics = new CmdTopicPolicies(() -> admin);
+        cmdTopics.run(split("remove-topic-partition-level-metrics-in-prometheus persistent://myprop/ns1/ds1 -g"));
+        verify(mockGlobalTopicsPolicies)
+                .removeTopicPartitionLevelMetricsInPrometheusStatus("persistent://myprop/ns1/ds1");
     }
 
     @SuppressWarnings("deprecation")

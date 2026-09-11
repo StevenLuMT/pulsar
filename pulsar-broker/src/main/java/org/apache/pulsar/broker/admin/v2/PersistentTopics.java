@@ -5644,6 +5644,99 @@ public class PersistentTopics extends PersistentTopicsBase {
                 });
     }
 
+    @GET
+    @Path("/{tenant}/{namespace}/{topic}/topicPartitionLevelMetricsInPrometheusEnabled")
+    @Operation(summary = "Get topicPartitionLevelMetricsInPrometheus configuration of a topic.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "403", description = "Don't have admin permission"),
+            @ApiResponse(responseCode = "404",
+                    description = "Tenant or cluster or namespace or topic doesn't exist"),
+            @ApiResponse(responseCode = "405",
+                    description = "Topic level policy is disabled, please enable the topic level policy and retry")})
+    public void getTopicPartitionLevelMetricsInPrometheus(
+            @Suspended final AsyncResponse asyncResponse,
+            @PathParam("tenant") String tenant,
+            @PathParam("namespace") String namespace,
+            @PathParam("topic") @Encoded String encodedTopic,
+            @QueryParam("applied") @DefaultValue("false") boolean applied,
+            @QueryParam("isGlobal") @DefaultValue("false") boolean isGlobal,
+            @Parameter(description = "Whether leader broker redirected this call to this broker. For internal use.")
+            @QueryParam("authoritative") @DefaultValue("false") boolean authoritative) {
+        validateTopicName(tenant, namespace, encodedTopic);
+        validateTopicPolicyOperationAsync(topicName, PolicyName.TOPIC_PARTITION_LEVEL_METRICS_IN_PROMETHEUS,
+                PolicyOperation.READ)
+                .thenCompose(__ -> preValidation(authoritative))
+                .thenCompose(__ -> internalGetTopicPartitionLevelMetricsInPrometheus(applied, isGlobal))
+                .thenApply(asyncResponse::resume)
+                .exceptionally(ex -> {
+                    handleTopicPolicyException("getTopicPartitionLevelMetricsInPrometheus", ex, asyncResponse);
+                    return null;
+                });
+    }
+
+    @POST
+    @Path("/{tenant}/{namespace}/{topic}/topicPartitionLevelMetricsInPrometheusEnabled")
+    @Operation(summary = "Set topicPartitionLevelMetricsInPrometheus enabled on a topic.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "Operation successful"),
+            @ApiResponse(responseCode = "403", description = "Don't have admin permission"),
+            @ApiResponse(responseCode = "404",
+                    description = "Tenant or cluster or namespace or topic doesn't exist"),
+            @ApiResponse(responseCode = "405",
+                    description = "Topic level policy is disabled, please enable the topic level policy and retry")})
+    public void setTopicPartitionLevelMetricsInPrometheus(
+            @Suspended final AsyncResponse asyncResponse,
+            @PathParam("tenant") String tenant,
+            @PathParam("namespace") String namespace,
+            @PathParam("topic") @Encoded String encodedTopic,
+            @QueryParam("isGlobal") @DefaultValue("false") boolean isGlobal,
+            @Parameter(description = "Whether leader broker redirected this call to this broker. For internal use.")
+            @QueryParam("authoritative") @DefaultValue("false") boolean authoritative,
+            @Parameter(description = "topicPartitionLevelMetricsInPrometheusEnabled policies for the specified topic")
+            Boolean enabled) {
+        validateTopicName(tenant, namespace, encodedTopic);
+        validateTopicPolicyOperationAsync(topicName, PolicyName.TOPIC_PARTITION_LEVEL_METRICS_IN_PROMETHEUS,
+                PolicyOperation.WRITE)
+                .thenCompose(__ -> preValidation(authoritative))
+                .thenCompose(__ -> internalSetTopicPartitionLevelMetricsInPrometheus(enabled, isGlobal))
+                .thenRun(() -> asyncResponse.resume(Response.noContent().build()))
+                .exceptionally(ex -> {
+                    handleTopicPolicyException("setTopicPartitionLevelMetricsInPrometheus", ex, asyncResponse);
+                    return null;
+                });
+    }
+
+    @DELETE
+    @Path("/{tenant}/{namespace}/{topic}/topicPartitionLevelMetricsInPrometheusEnabled")
+    @Operation(summary = "Remove topicPartitionLevelMetricsInPrometheus configuration for specified topic.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "Operation successful"),
+            @ApiResponse(responseCode = "403", description = "Don't have admin permission"),
+            @ApiResponse(responseCode = "404",
+                    description = "Tenant or cluster or namespace or topic doesn't exist"),
+            @ApiResponse(responseCode = "405",
+                    description = "Topic level policy is disabled, please enable the topic level policy and retry"),
+            @ApiResponse(responseCode = "409", description = "Concurrent modification")})
+    public void removeTopicPartitionLevelMetricsInPrometheus(
+            @Suspended final AsyncResponse asyncResponse,
+            @PathParam("tenant") String tenant,
+            @PathParam("namespace") String namespace,
+            @PathParam("topic") @Encoded String encodedTopic,
+            @QueryParam("isGlobal") @DefaultValue("false") boolean isGlobal,
+            @Parameter(description = "Whether leader broker redirected this call to this broker. For internal use.")
+            @QueryParam("authoritative") @DefaultValue("false") boolean authoritative) {
+        validateTopicName(tenant, namespace, encodedTopic);
+        validateTopicPolicyOperationAsync(topicName, PolicyName.TOPIC_PARTITION_LEVEL_METRICS_IN_PROMETHEUS,
+                PolicyOperation.WRITE)
+                .thenCompose(__ -> preValidation(authoritative))
+                .thenCompose(__ -> internalSetTopicPartitionLevelMetricsInPrometheus(null, isGlobal))
+                .thenRun(() -> asyncResponse.resume(Response.noContent().build()))
+                .exceptionally(ex -> {
+                    handleTopicPolicyException("removeTopicPartitionLevelMetricsInPrometheus", ex, asyncResponse);
+                    return null;
+                });
+    }
+
     private Map<String, String> parseProperties(String propertiesStr) {
         if (propertiesStr == null || propertiesStr.trim().isEmpty()) {
             return Collections.emptyMap();

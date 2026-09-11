@@ -677,4 +677,13 @@ class TopicStats {
 
         stream.writeSample(metricName, value, labelsAndValues);
     }
+
+    public static String getTopicWithOutPartitions(String topic) {
+        int index = topic.indexOf(PARTITIONED_TOPIC_SUFFIX);
+        if (index > 0) {
+            return topic.substring(0, index);
+        } else {
+            return topic;
+        }
+    }
 }
