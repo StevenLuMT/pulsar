@@ -336,6 +336,8 @@ public abstract class AbstractTopic implements Topic, TopicPolicyListener {
         topicPolicies.getEntryFilters().updateTopicValue(data.getEntryFilters(), isGlobalPolicies);
         topicPolicies.getDispatcherPauseOnAckStatePersistentEnabled()
                 .updateTopicValue(data.getDispatcherPauseOnAckStatePersistentEnabled(), isGlobalPolicies);
+        topicPolicies.getTopicPartitionLevelMetricsInPrometheusEnabled()
+                .updateTopicValue(data.getTopicPartitionLevelMetricsInPrometheusEnabled(), isGlobalPolicies);
 
         // Merge instead of assigning directly: keep the local and global per-subscription policies separately and
         // recompute the effective map with local precedence, so applying the (default-empty) global map does not
@@ -423,6 +425,8 @@ public abstract class AbstractTopic implements Topic, TopicPolicyListener {
 
         topicPolicies.getDispatcherPauseOnAckStatePersistentEnabled().updateNamespaceValue(
                 namespacePolicies.dispatcherPauseOnAckStatePersistentEnabled);
+        topicPolicies.getTopicPartitionLevelMetricsInPrometheusEnabled().updateNamespaceValue(
+                namespacePolicies.topicPartitionLevelMetricsInPrometheusEnabled);
 
         updateEntryFilters();
     }
@@ -532,6 +536,8 @@ public abstract class AbstractTopic implements Topic, TopicPolicyListener {
                 config.getEntryFilterNames())));
         topicPolicies.getDispatcherPauseOnAckStatePersistentEnabled()
                 .updateBrokerValue(config.isDispatcherPauseOnAckStatePersistentEnabled());
+        topicPolicies.getTopicPartitionLevelMetricsInPrometheusEnabled()
+                .updateBrokerValue(config.isTopicPartitionLevelMetricsInPrometheusEnabled());
         updateEntryFilters();
     }
 

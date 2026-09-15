@@ -2033,4 +2033,63 @@ public interface TopicPolicies {
      * Delete topic policies, it works even if the topic has been deleted.
      */
     void deleteTopicPolicies(String topic) throws PulsarAdminException;
+
+    /**
+     * get topicPartitionLevelMetricsInPrometheusStatus enabled of a topic.
+     * @param topic
+     * @return
+     * @throws PulsarAdminException
+     */
+    Boolean getTopicPartitionLevelMetricsInPrometheusStatus(String topic) throws PulsarAdminException;
+
+    /**
+     * get topicPartitionLevelMetricsInPrometheusStatus enabled of a topic asynchronously.
+     * @param topic
+     * @return
+     */
+    CompletableFuture<Boolean> getTopicPartitionLevelMetricsInPrometheusStatusAsync(String topic);
+    /**
+     * get topicPartitionLevelMetricsInPrometheusStatus enabled of a topic.
+     * @param topic
+     * @return
+     * @throws PulsarAdminException
+     */
+    Boolean getTopicPartitionLevelMetricsInPrometheusStatus(String topic, boolean applied) throws PulsarAdminException;
+
+    /**
+     * get topicPartitionLevelMetricsInPrometheusStatus enabled of a topic asynchronously.
+     * @param topic
+     * @return
+     */
+    CompletableFuture<Boolean> getTopicPartitionLevelMetricsInPrometheusStatusAsync(String topic, boolean applied);
+
+    /**
+     * set topicPartitionLevelMetricsInPrometheusStatus enabled of a topic.
+     * @param topic
+     * @param enabled
+     * @throws PulsarAdminException
+     */
+    void setTopicPartitionLevelMetricsInPrometheusStatus(String topic, boolean enabled) throws PulsarAdminException;
+
+    /**
+     * set topicPartitionLevelMetricsInPrometheusStatus enabled of a topic asynchronously.
+     * @param topic
+     * @param enabled
+     * @return
+     */
+    CompletableFuture<Void> setTopicPartitionLevelMetricsInPrometheusStatusAsync(String topic, boolean enabled);
+
+    /**
+     * remove topicPartitionLevelMetricsInPrometheusStatus enabled of a topic.
+     * @param topic
+     * @throws PulsarAdminException
+     */
+    void removeTopicPartitionLevelMetricsInPrometheusStatus(String topic) throws PulsarAdminException;
+
+    /**
+     * remove topicPartitionLevelMetricsInPrometheusStatus enabled of a topic asynchronously.
+     * @param topic
+     * @return
+     */
+    CompletableFuture<Void> removeTopicPartitionLevelMetricsInPrometheusStatusAsync(String topic);
 }

@@ -1378,6 +1378,62 @@ public class TopicPoliciesImpl extends BaseResource implements TopicPolicies {
         return asyncDeleteRequest(path);
     }
 
+    @Override
+    public Boolean getTopicPartitionLevelMetricsInPrometheusStatus(String topic) throws PulsarAdminException {
+        return getTopicPartitionLevelMetricsInPrometheusStatus(topic, false);
+    }
+
+    @Override
+    public CompletableFuture<Boolean> getTopicPartitionLevelMetricsInPrometheusStatusAsync(String topic) {
+        return getTopicPartitionLevelMetricsInPrometheusStatusAsync(topic, false);
+    }
+
+    @Override
+    public Boolean getTopicPartitionLevelMetricsInPrometheusStatus(String topic, boolean applied)
+            throws PulsarAdminException {
+        return sync(() -> getTopicPartitionLevelMetricsInPrometheusStatusAsync(topic, applied));
+    }
+
+    @Override
+    public CompletableFuture<Boolean> getTopicPartitionLevelMetricsInPrometheusStatusAsync(String topic,
+            boolean applied) {
+        TopicName topicName = validateTopic(topic);
+        WebTarget path = topicPath(topicName, "topicPartitionLevelMetricsInPrometheusEnabled");
+        path = path.queryParam("applied", applied);
+        return asyncGetRequest(path, new FutureCallback<Boolean>(){});
+    }
+
+    private CompletableFuture<Void> enableTopicPartitionLevelMetricsInPrometheusAsync(String topic, boolean enabled) {
+        TopicName topicName = validateTopic(topic);
+        WebTarget path = topicPath(topicName, "topicPartitionLevelMetricsInPrometheusEnabled");
+        return asyncPostRequest(path, Entity.entity(enabled, MediaType.APPLICATION_JSON));
+    }
+
+    @Override
+    public void setTopicPartitionLevelMetricsInPrometheusStatus(String topic, boolean enabled)
+            throws PulsarAdminException {
+        sync(() -> enableTopicPartitionLevelMetricsInPrometheusAsync(topic, enabled));
+    }
+
+    @Override
+    public CompletableFuture<Void> setTopicPartitionLevelMetricsInPrometheusStatusAsync(String topic, boolean enabled) {
+        TopicName topicName = validateTopic(topic);
+        WebTarget path = topicPath(topicName, "topicPartitionLevelMetricsInPrometheusEnabled");
+        return asyncPostRequest(path, Entity.entity(enabled, MediaType.APPLICATION_JSON));
+    }
+
+    @Override
+    public void removeTopicPartitionLevelMetricsInPrometheusStatus(String topic) throws PulsarAdminException {
+        sync(() -> removeTopicPartitionLevelMetricsInPrometheusStatusAsync(topic));
+    }
+
+    @Override
+    public CompletableFuture<Void> removeTopicPartitionLevelMetricsInPrometheusStatusAsync(String topic) {
+        TopicName tn = validateTopic(topic);
+        WebTarget path = topicPath(tn, "topicPartitionLevelMetricsInPrometheusEnabled");
+        return asyncDeleteRequest(path);
+    }
+
     /*
      * returns topic name with encoded Local Name
      */
