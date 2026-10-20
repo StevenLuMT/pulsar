@@ -29,14 +29,6 @@ dependencyResolutionManagement {
     @Suppress("UnstableApiUsage")
     repositories {
         mavenCentral()
-        // Temporary staging repository for BookKeeper 4.18.2 RC; remove after release.
-        maven {
-            name = "bk-staging"
-            url = uri("https://repository.apache.org/content/repositories/orgapachebookkeeper-1109/")
-            mavenContent {
-                releasesOnly()
-            }
-        }
         maven {
             url = uri("https://packages.confluent.io/maven/")
             content {
